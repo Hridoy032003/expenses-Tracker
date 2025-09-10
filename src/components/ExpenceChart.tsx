@@ -16,10 +16,11 @@ import {
   Legend,
 } from "recharts";
 import { TrendingUp } from "lucide-react";
+import { Skeleton } from "./ui/skeleton";
 
 export default function ExpenseChart() {
-  const [categoryData, setCategoryData] = useState<any[]>([]);
-  const [expenses, setExpenses] = useState<any[]>([]);
+  const [categoryData, setCategoryData] = useState<unknown[]>([]);
+  const [expenses, setExpenses] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,23 +29,23 @@ export default function ExpenseChart() {
     const fetchData = async () => {
       try {
         // Fetch expenses data
-        const expensesResponse = await fetch("/api/getAllexpence"); // Your API endpoint for expenses
+        const expensesResponse = await fetch("/api/getAllexpence"); 
         if (!expensesResponse.ok) {
           throw new Error("Failed to fetch expenses");
         }
         const expensesData = await expensesResponse.json();
-        setExpenses(expensesData.Expences || []); // Assuming the API returns "Expences"
+        setExpenses(expensesData.Expences || []);
 
-        // Fetch category data
-        const categoryResponse = await fetch("/api/categoryData"); // Your API endpoint for category data
+    
+        const categoryResponse = await fetch("/api/categoryData"); 
         if (!categoryResponse.ok) {
           throw new Error("Failed to fetch category data");
         }
         const categoryData = await categoryResponse.json();
-        setCategoryData(categoryData.categories || []); // Assuming the API returns "categories"
-
+        setCategoryData(categoryData.categories || []); 
         setLoading(false);
       } catch (error) {
+        console.error("Error fetching data:", error);
         setError("Failed to load data");
         setLoading(false);
       }
@@ -104,7 +105,7 @@ export default function ExpenseChart() {
       : "#000000"; // Default to black if not found
   };
 
-  const pieData = categoryData.map((data, index) => ({
+  const pieData = categoryData.map((data) => ({
     name: data.category,
     value: data.amount,
     color: getCategoryColor(data.category),
@@ -119,7 +120,7 @@ export default function ExpenseChart() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="grid grid-cols-1 lg:grid-cols-2 gap-6"><Skeleton className="p-50" /><Skeleton className="p-50" /></div>;
   }
 
   if (error) {
@@ -161,7 +162,7 @@ export default function ExpenseChart() {
 
               {/* Legend */}
               <div className="grid grid-cols-2 gap-2 text-sm">
-                {categoryData.slice(0, 6).map((data, index) => (
+                {categoryData.slice(0, 6).map((data) => (
                   <div key={data.category} className="flex items-center gap-2">
                     <div
                       className="w-3 h-3 rounded-full flex-shrink-0"

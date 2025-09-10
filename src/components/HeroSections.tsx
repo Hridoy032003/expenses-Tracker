@@ -9,8 +9,6 @@ import {
   Shield,
   Smartphone,
   BarChart3,
-  PieChart,
-  Calendar,
 } from "lucide-react";
 
 export default function HeroSection() {

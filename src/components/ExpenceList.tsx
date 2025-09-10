@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Search, Filter, Edit, Trash2, Calendar } from "lucide-react";
 import { Expense } from "@/lib/types";
 import { defaultCategories } from "@/lib/data";
+import { Skeleton } from "./ui/skeleton";
 
 interface ExpenseListProps {
   expenses: Expense[];
@@ -20,7 +21,7 @@ interface ExpenseListProps {
 }
 
 export default function ExpenseList({
-  expenses,
+ 
   onEdit,
   onDelete,
 }: ExpenseListProps) {
@@ -44,6 +45,7 @@ export default function ExpenseList({
         setFetchedExpenses(data.Expences || []); 
         setLoading(false);
       } catch (error) {
+        console.error("Error fetching expenses:", error);
         setError("Failed to load expenses");
         setLoading(false);
       }
@@ -100,7 +102,7 @@ export default function ExpenseList({
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Skeleton className="p-50" /></div>;
   }
 
   if (error) {

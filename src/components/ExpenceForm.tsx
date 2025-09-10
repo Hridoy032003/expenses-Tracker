@@ -18,13 +18,12 @@ import { PlusCircle, X } from "lucide-react";
 import { defaultCategories } from "@/lib/data";
 import { Expense } from "@/lib/types";
 
-
 const API_BASE_URL = "/api/expence/addExpence";
 
 interface ExpenseFormProps {
-  expense?: Expense; 
-  onSuccess: () => void; 
-  onCancel: () => void; 
+  expense?: Expense;
+  onSuccess: () => void;
+  onCancel: () => void;
 }
 
 export default function ExpenseForm({
@@ -32,7 +31,6 @@ export default function ExpenseForm({
   onSuccess,
   onCancel,
 }: ExpenseFormProps) {
- 
   const [formData, setFormData] = useState({
     title: expense?.title || "",
     amount: expense?.amount ? String(expense.amount) : "",
@@ -43,7 +41,7 @@ export default function ExpenseForm({
     description: expense?.description || "",
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
 
   const [serverError, setServerError] = useState<string | null>(null);
@@ -70,19 +68,16 @@ export default function ExpenseForm({
     return Object.keys(newErrors).length === 0;
   };
 
- 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-  
     if (!validateForm()) {
-      return; 
+      return;
     }
 
     setIsSubmitting(true);
-    setServerError(null); 
+    setServerError(null);
     try {
-      
       const expenseDataToSend = {
         title: formData.title.trim(),
         amount: Number(formData.amount),
@@ -100,18 +95,15 @@ export default function ExpenseForm({
           method: "PUT", // Or 'PATCH' depending on your API
           headers: {
             "Content-Type": "application/json",
-            
           },
           body: JSON.stringify(expenseDataToSend),
         });
       } else {
-       
         url = API_BASE_URL;
         response = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-         
           },
           body: JSON.stringify(expenseDataToSend),
         });
@@ -125,23 +117,17 @@ export default function ExpenseForm({
       }
 
       onSuccess();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error saving expense:", error);
-      setServerError(
-        error.message || "An unexpected error occurred. Please try again."
-      );
+   
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  
-  const handleInputChange = (
-    field: keyof typeof formData, 
-    value: string
-  ) => {
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-   
+
     if (clientErrors[field]) {
       setClientErrors((prev) => ({ ...prev, [field]: "" }));
     }

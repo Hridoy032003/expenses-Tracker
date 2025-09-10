@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Wallet, AlertTriangle } from "lucide-react";
+import { Plus, Terminal, Wallet } from "lucide-react";
 
 import { getExpenses, getExpenseSummary, deleteExpense } from "@/lib/data";
 import { Expense, ExpenseSummary } from "@/lib/types";
@@ -10,6 +10,7 @@ import ExpenseForm from "@/components/ExpenceForm";
 import ExpenseSummaryComponent from "@/components/ExpenceSummery";
 import ExpenseChart from "@/components/ExpenceChart";
 import ExpenseList from "@/components/ExpenceList";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Home() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -95,16 +96,16 @@ export default function Home() {
         </div>
 
         {/* Delete Confirmation Alert */}
-        {/* {deleteConfirm && (
-          <Alert className="mb-6 border-orange-200 bg-orange-50">
-            <AlertTriangle className="h-4 w-4 text-orange-600" />
-            <AlertDescription className="text-orange-800">
-              Click delete again to confirm removal of this expense.
+        {deleteConfirm && (
+          <Alert >
+            <Terminal className="h-5 w-5 mr-2" />
+            <AlertTitle>Heads up!</AlertTitle>
+            <AlertDescription>
+              You can add components and dependencies to your app using the cli.
             </AlertDescription>
           </Alert>
-        )} */}
+        )}
 
-        {/* Form Modal */}
         {showForm && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -120,7 +121,7 @@ export default function Home() {
         {/* Main Content */}
         <div className="space-y-8">
           {/* Summary Cards */}
-          <ExpenseSummaryComponent summary={summary} />
+          <ExpenseSummaryComponent summary={summary || null} />
 
           {/* Charts */}
           <ExpenseChart />

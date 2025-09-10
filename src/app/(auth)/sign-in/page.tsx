@@ -1,7 +1,7 @@
 
 
 import GoogleLogin from "@/components/GoogleLogin";
-import { cn } from "@/lib/utils";
+
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { FC } from "react";

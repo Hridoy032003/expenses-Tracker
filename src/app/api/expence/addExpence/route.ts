@@ -83,5 +83,3 @@ export async function POST(request: NextRequest) {
     }
   } 
 }
-
-// You would also define a PUT or PATCH handler for updates, and GET for fetching.

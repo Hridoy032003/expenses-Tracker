@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   TrendingUp,
   TrendingDown,
@@ -11,6 +11,17 @@ import {
   Calendar,
 } from "lucide-react";
 import { ExpenseSummary } from "@/lib/types";
+import { Skeleton } from "./ui/skeleton";
+
+// Define Expense type for better type safety
+interface Expense {
+  id: string;
+  title: string;
+  amount: number;
+  category: string;
+  date: string; // Format: YYYY-MM-DD
+  description?: string;
+}
 
 export default function ExpenseSummaryComponent() {
   const [summary, setSummary] = useState<ExpenseSummary | null>(null);
@@ -34,17 +45,17 @@ export default function ExpenseSummaryComponent() {
           throw new Error("Failed to fetch expenses");
         }
         const expensesData = await expensesResponse.json();
-        const expenses = expensesData.Expences || [];
+        const expenses: Expense[] = expensesData.Expences || []; // Ensure expenses are typed correctly
 
         // Calculate the summary based on fetched expenses
         const totalExpenses = expenses.reduce(
-          (sum: number, expense: any) => sum + expense.amount,
+          (sum, expense) => sum + expense.amount,
           0
         );
 
         // Calculate monthly total
         const thisMonth = new Date();
-        const monthlyExpenses = expenses.filter((expense: any) => {
+        const monthlyExpenses = expenses.filter((expense) => {
           const expenseDate = new Date(expense.date);
           return (
             expenseDate.getMonth() === thisMonth.getMonth() &&
@@ -52,19 +63,19 @@ export default function ExpenseSummaryComponent() {
           );
         });
         const monthlyTotal = monthlyExpenses.reduce(
-          (sum: number, expense: any) => sum + expense.amount,
+          (sum, expense) => sum + expense.amount,
           0
         );
 
         // Calculate weekly total
         const thisWeekStart = new Date();
         thisWeekStart.setDate(thisWeekStart.getDate() - thisWeekStart.getDay());
-        const weeklyExpenses = expenses.filter((expense: any) => {
+        const weeklyExpenses = expenses.filter((expense) => {
           const expenseDate = new Date(expense.date);
           return expenseDate >= thisWeekStart && expenseDate <= new Date();
         });
         const weeklyTotal = weeklyExpenses.reduce(
-          (sum: number, expense: any) => sum + expense.amount,
+          (sum, expense) => sum + expense.amount,
           0
         );
 
@@ -72,15 +83,18 @@ export default function ExpenseSummaryComponent() {
         const dailyAverage = totalExpenses / expenses.length;
 
         // Calculate top category (category with the highest total expense)
-        const categoryTotals = expenses.reduce((acc: any, expense: any) => {
-          const category = expense.category;
-          if (!acc[category]) acc[category] = 0;
-          acc[category] += expense.amount;
-          return acc;
-        }, {});
+        const categoryTotals: Record<string, number> = expenses.reduce(
+          (acc: Record<string, number>, expense: Expense) => {
+            const category = expense.category;
+            if (!acc[category]) acc[category] = 0; 
+            acc[category] += expense.amount; 
+            return acc;
+          },
+          {} 
+        );
 
         const topCategory = Object.entries(categoryTotals).reduce(
-          (max: any, entry: any) => {
+          (max, entry) => {
             if (entry[1] > max[1]) {
               return entry;
             }
@@ -104,6 +118,7 @@ export default function ExpenseSummaryComponent() {
         setSummary(calculatedSummary);
         setLoading(false);
       } catch (error) {
+        console.error("Error fetching data:", error);
         setError("Failed to load summary data");
         setLoading(false);
       }
@@ -170,7 +185,16 @@ export default function ExpenseSummaryComponent() {
   ];
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-between">
+        <Skeleton className="p-15" />
+        <Skeleton className="p-15" />
+        <Skeleton className="p-15" />
+        <Skeleton className="p-15" />
+        <Skeleton className="p-15" />
+        <Skeleton className="p-15" />
+      </div>
+    );
   }
 
   if (error) {

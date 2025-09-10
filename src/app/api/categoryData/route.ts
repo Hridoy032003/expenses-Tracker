@@ -1,18 +1,21 @@
 // /pages/api/categoryData.ts
 
+import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";  // Your Prisma db import
 
 export async function GET() {
   try {
-    // Query to get total amount spent per category
-    const categoryData = await db.expence.groupBy({
-      by: ['category'],
-      _sum: {
-        amount: true
-      }
-    });
-
-    // Format the data for the front-end
+const session = await getAuthSession();
+const categoryData=await db.expence.groupBy({
+    where: {
+    userId: session?.user?.id,
+  },
+  by: ['category'],
+  _sum: {
+    amount: true
+  }
+});
+    
     const formattedCategoryData = categoryData.map((data) => ({
       category: data.category,
       amount: data._sum.amount || 0,

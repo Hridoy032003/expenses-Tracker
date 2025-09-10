@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateNumericOTP } from "@/utils/otp";
 import { sendMail } from "@/lib/mail";
 
-export async function POST(request: NextRequest,response: NextResponse) {
+export async function POST(request: NextRequest) {
   try {
     const { email, name, password, conformPassword, image, userOtp } = await request.json();
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest,response: NextResponse) {
             image,
         },
     });
-    return NextResponse.json({ message: "User created successfully", createUser }, { status: 201 });
+    return NextResponse.json({ message: "User created successfully", createUser,saveOtp }, { status: 201 });
   } catch (error) {
     console.error("Error creating user:", error);
     return NextResponse.json({ message: "Internal Server Error", error }, { status: 500 });
